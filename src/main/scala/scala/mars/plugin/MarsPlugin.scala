@@ -54,6 +54,7 @@ class MarsPlugin(val global: Global) extends Plugin {
             val fileName = unit.source.file.name
             if (fileName.endsWith(".scala")) {
               val tree = unit.body
+              MarsTransformer(expandName)
               println(showCode(tree))
             } else
               println("File " + fileName + " is not processed")
@@ -61,6 +62,23 @@ class MarsPlugin(val global: Global) extends Plugin {
           case e: Exception =>
             e.printStackTrace()
             throw e
+        }
+      }
+    }
+
+    object MarsTransformer {
+      def apply(defName: String) = 
+        new MarsTransformer(defName)
+    }
+    class MarsTransformer(defName: String) extends Transformer {
+      override def transform(tree: Tree): Tree = {
+        tree match {
+          //TODO expand...
+          case vdDef: ValDef if vdDef.name == defName => {
+            vdDef
+          }
+          case _ =>
+            super.transform(tree)
         }
       }
     }
